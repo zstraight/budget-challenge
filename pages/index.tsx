@@ -6,6 +6,7 @@ interface Option {
   cost: number;
 }
 
+// Only keep interfaces we're actually using
 interface Question {
   id: number;
   category: string;
@@ -14,69 +15,125 @@ interface Question {
 
 const BudgetApp = () => {
   // App states
-  const [currentPage, setCurrentPage] = useState('welcome'); // welcome, question-1 through question-5, results
-  const [budget, setBudget] = useState(400);
-  const [selections, setSelections] = useState({});
-  
+  const [currentPage, setCurrentPage] = useState('welcome');
+  const [budget, setBudget] = useState(700);
+
   // Complete questions data structure
-  const questions = [
+  const questions: Question[] = [
     {
       id: 1,
-      category: "Repairs",
+      category: "Since you're undocumented, you can't risk getting caught driving without a license.\n How would you get to work for the week?",
       options: [
-        { label: "Car", cost: 130 },
-        { label: "Sink", cost: 70 },
-        { label: "Bike", cost: 40 },
-        { label: "Roof", cost: 110 }
+        { label: "Ubering", cost: 100 },
+        { label: "Bike to work (but you have to repair a flat tire)", cost: 25 },
+        { label: "Public Transportation", cost: 30 },
+        { label: "Risk driving anyways (and get a ticket)", cost: 75 }
       ]
     },
     {
       id: 2,
-      category: "Child Care",
+      category: "How would you handle child care for while you're at work?",
       options: [
-        { label: "Clothes", cost: 50 },
-        { label: "Diapers", cost: 20 },
-        { label: "New Toy", cost: 25 },
-        { label: "Backpack", cost: 35 }
+        { label: "Daycare", cost: 200 },
+        { label: "Partner Looks After Them (and lose the income they provide):", cost: 300 },
+        { label: "Personal Babysitter", cost: 250 },
+        { label: "Pre-School", cost: 350 }
       ]
     },
     {
       id: 3,
-      category: "Groceries",
+      category: "Where would you get groceries for the week?",
       options: [
-        { label: "Trader Joe's", cost: 110 },
+        { label: "Trader Joes", cost: 110 },  // Fixed apostrophe
         { label: "Stop & Shop", cost: 100 },
         { label: "Whole Foods", cost: 220 },
-        { label: "Grocery Clearance Section", cost: 60 }
-      ]
-    },
-    {
-      id: 4,
-      category: "Date",
-      options: [
-        { label: "Movie", cost: 45 },
-        { label: "Concert", cost: 70 },
-        { label: "Picnic", cost: 35 },
-        { label: "Restaurant", cost: 90 }
+        { label: "Grocery Clearance Section & Food Bank", cost: 60 }
       ]
     },
     {
       id: 5,
-      category: "Family Activity",
+      category: "You can only afford to pick one item of child supplies this week. Which do you choose?",
+      options: [
+        { label: "Diapers", cost: 20 },
+        { label: "Formula", cost: 30 },
+        { label: "New Crib", cost: 80 },
+        { label: "Baby Monitor", cost: 40 }
+      ]
+    },
+    {
+      id: 7,
+      category: "It's date night, where do you go?",
+      options: [
+        { label: "Movie Theater", cost: 35 },
+        { label: "Concert", cost: 70 },
+        { label: "Picnic", cost: 25 },
+        { label: "Their Favorite Restaurant", cost: 50 }
+      ]
+    },
+    {
+      id: 6,
+      category: "You wanted to do a family activity this weekend, what do you choose?",
       options: [
         { label: "Water Park", cost: 65 },
         { label: "Six Flags", cost: 80 },
-        { label: "Hiking Trail and Camping", cost: 30 },
-        { label: "PS5 Pro", cost: 700 }
+        { label: "Hiking Trail & Camping", cost: 30 },
+        { label: "Go To The Park & Ice Cream", cost: 15 }
+      ]
+    },
+    {
+      id: 4,
+      category: "Since you are only able to afford low-income housing, multiple \nthings in your home require repair that your landlord refuses to fix. \nPick one to fix yourself:",
+      options: [
+        { label: "Dirty Water Coming From Sink", cost: 70 },
+        { label: "Leaking Roof", cost: 150 },
+        { label: "Cracked Window", cost: 45 },
+        { label: "Broken Outlets", cost: 30 }
+      ]
+    },
+    {
+      id: 9,
+      category: "Your child is growing and needs new clothes, where do you get them?",
+      options: [
+        { label: "2nd hand store", cost: 40 },
+        { label: "Hand-Me-Downs From Neighbor (need material to patch up worn holes)", cost: 15 },
+        { label: "Go To The Mall", cost: 70 },
+        { label: "Order Name Brand Clothes Online", cost: 120 }
+      ]
+    },
+    {
+      id: 8,
+      category: "Your child gets sick with a bad fever, you must bring them to the doctor.",
+      options: [
+        { label: "", cost: 80 }
+      ]
+    },
+    {
+      id: 10,
+      category: "Your child's 4th birthday is coming up this week, what present do you get?",
+      options: [
+        { label: "New Lego Set", cost: 50 },
+        { label: "PS5", cost: 500 },
+        { label: "Cake & A Donation From The Toy Drive", cost: 30 },
+        { label: "No Present; Have To Explain Why They Didn't Get A Gift", cost: 0 }
+      ]
+    },
+    {
+      id: 11,
+      category: "Your boss skips out part of your paycheck this week. \nHe's threatening to call immigration services if you complain.",
+      options: [
+        { label: "", cost: 45 }
+      ]
+    },
+    {
+      id: 12,
+      category: "Dont forget, gotta pay rent for that 1 bedroom apartment.",
+      options: [
+        { label: "", cost: 300 }
       ]
     }
   ];
 
   const handleSelection = (questionId: number, optionCost: number): void => {
-    setSelections(prev => ({
-      ...prev,
-      [questionId]: optionCost
-    }));
     setBudget(prev => prev - optionCost);
   };
 
@@ -84,11 +141,14 @@ const BudgetApp = () => {
   const renderWelcome = () => (
     <Card className="p-6 max-w-2xl mx-auto text-center">
       <h1 className="text-2xl font-bold mb-4">Welcome to Budget Challenge</h1>
-      <p className="mb-6">
-        You'll start with $400 and make choices across 5 different categories.
-        Choose wisely as each decision affects your remaining budget!
-      </p>
-      <button 
+      {/* Changed the nested structure to use a div with individual p tags */}
+      <div className="mb-6 space-y-4">
+        <p>As an undocumented person, you have a weekly income of $400.
+          Your partner works part time, bringing in an additional $300 per week.</p>
+        <p>Attempt to manage a weeks worth of expenses as a parent within your $700 budget.</p>
+        <p>Choose wisely as each decision affects your remaining amount.</p>
+      </div>
+      <button
         onClick={() => setCurrentPage('question-1')}
         className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
       >
@@ -100,7 +160,7 @@ const BudgetApp = () => {
   // Render question page
   const renderQuestion = (questionNumber: number) => {
     const question = questions[questionNumber - 1];
-    
+
     // Add error handling for undefined question
     if (!question) {
       return (
@@ -126,7 +186,9 @@ const BudgetApp = () => {
         {/* Question content */}
         <Card className="p-6 mt-8">
           <h2 className="text-xl font-bold mb-4">
-            Question {questionNumber}: {question.category}
+            <span style={{ whiteSpace: 'pre-line' }}>
+              {question.category}
+            </span>
           </h2>
           <div className="grid grid-cols-2 gap-4">
             {question.options.map((option, idx) => (
@@ -135,7 +197,7 @@ const BudgetApp = () => {
                 onClick={() => {
                   handleSelection(question.id, option.cost);
                   // Show next button after selection
-                  if (questionNumber < 5) {
+                  if (questionNumber < 12) {
                     setCurrentPage(`question-${questionNumber + 1}`);
                   } else {
                     setCurrentPage('results');
@@ -143,7 +205,9 @@ const BudgetApp = () => {
                 }}
                 className="p-4 border rounded hover:bg-gray-50 text-left"
               >
-                <div className="font-medium">{option.label}</div>
+                <div className="font-medium"
+                  dangerouslySetInnerHTML={{ __html: option.label }}>
+                </div>
                 <div className="text-sm text-gray-500">Cost: ${option.cost}</div>
               </button>
             ))}
@@ -162,16 +226,15 @@ const BudgetApp = () => {
       </div>
       <div className="grid grid-cols-2 gap-4 text-sm">
         <div className="p-4 bg-gray-50 rounded">
-          {Object.entries(selections).length} choices made
+          <p></p>
+          Started with: $700.00
         </div>
         <div className="p-4 bg-gray-50 rounded">
-          Started with: $400.00
+          Total spent: ${(700 - budget).toFixed(2)}
         </div>
         <div className="p-4 bg-gray-50 rounded">
-          Total spent: ${(400 - budget).toFixed(2)}
-        </div>
-        <div className="p-4 bg-gray-50 rounded">
-          {budget >= 0 ? 'Under budget! 🎉' : 'Over budget! 😬'}
+          <p></p>
+          {budget >= 0 ? '✅ Under Budget! ✅' : '❌ Over Budget! ❌'}
         </div>
       </div>
     </Card>
@@ -181,7 +244,7 @@ const BudgetApp = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       {currentPage === 'welcome' && renderWelcome()}
-      {currentPage.startsWith('question-') && 
+      {currentPage.startsWith('question-') &&
         renderQuestion(parseInt(currentPage.split('-')[1]))}
       {currentPage === 'results' && renderResults()}
     </div>
